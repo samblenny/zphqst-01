@@ -11,7 +11,7 @@
 # - https://cmake.org/cmake/help/latest/command/set.html
 # - https://cmake.org/cmake/help/latest/command/string.html
 # - https://cmake.org/cmake/help/latest/variable/PROJECT_SOURCE_DIR.html
-# 
+#
 
 
 # These next two lines are required by CMake
@@ -33,5 +33,6 @@ message(STATUS "Result of `which openocd`: ${OPENOCD}")
 set(BOARD_ROOT ${PROJECT_SOURCE_DIR})
 message(STATUS "Looking for custom boards in: ${PROJECT_SOURCE_DIR}")
 
-find_package(Zephyr)
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+message(WARNING "ZEPHYR_BASE=$ENV{ZEPHYR_BASE}")
 target_sources(app PRIVATE src/main.c)
