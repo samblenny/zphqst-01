@@ -3,6 +3,9 @@
 
 # zphqst-01
 
+**WORK IN PROGRESS**
+**This doesn't actually do much of anything useful yet**
+
 This repo has example code for the
 [Zephyr Quest: Feather RP2350 Board Def](https://adafruit-playground.com/u/SamBlenny/pages/zephyr-quest-feather-rp2350-board-def)
 playground guide, which explains how to make a custom Zephyr board definition
