@@ -9,6 +9,11 @@
 shell:
 	west build -b feather_rp2350/rp2350a/m33 $(_CMAKE_ARGS)
 
+# Build the zephyr repo's hello_world sample
+hello_world:
+	west build -b feather_rp2350/rp2350a/m33 ../zephyr/samples/hello_world \
+		-- -DBOARD_ROOT=$$(pwd) -DOPENOCD=$$(which openocd)
+
 # Interactively modify config from previous build
 menuconfig:
 	west build -t menuconfig
@@ -40,4 +45,4 @@ dtc:
 		-Wunique_unit_address_if_enabled         \
 		build/zephyr/zephyr.dts
 
-.PHONY: shell menuconfig flash uart clean dtc
+.PHONY: shell hello_world menuconfig flash uart clean dtc
