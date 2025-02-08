@@ -13,9 +13,11 @@
 
 / {
 	chosen {
+		zephyr,code-partition = &code_partition;
 		zephyr,console = &uart0;
 		zephyr,flash = &flash0;
 		zephyr,shell-uart = &uart0;
+		zephyr,sram = &sram0;
 	};
 };
 
@@ -24,7 +26,38 @@
 	status = "okay";
 };
 
+/* For addresses, registers, flash partition table info, etc refer to the
+ * Raspberry Pi RP2350 datasheet:
+ * https://datasheets.raspberrypi.com/rp2350/rp2350-datasheet.pdf
+ */
+
 &flash0 {
 	reg = <0x10000000 DT_SIZE_M(4)>;
-	status = "disabled";
+	status = "okay";
+	/* Datasheet notes:
+	 * - Section 4.1: boot rom is 32kB starting at 0x00000000
+	 * - Section 5.1: Bootroom Concepts
+	 * - Section 5.1.2: Partition Tables
+	 * - Section 5.1.4: Image Definitions (purpose of .image_def partition)
+	 * See also:
+	 * https://docs.zephyrproject.org/latest/build/dts/api/bindings/mtd/fixed-partitions.html
+	 * - Properties > "Top level properties" > "Base properties" explains the
+	 *   #address-cells and #size-cells properties (the '#' is not a comment,
+	 *   and it's also not a C preprocessor directive)
+	 */
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		image_def: partition@0 {
+			label = "image_def";
+			reg = <0x00000000 0x100>;
+			read-only;
+		};
+		code_partition: partition@100 {
+			label = "code-partition";
+			reg = <0x100 (DT_SIZE_M(4) - 0x100)>;
+			read-only;
+		};
+	};
 };
