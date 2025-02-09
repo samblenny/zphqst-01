@@ -14,22 +14,36 @@ for the Adafruit Feather RP2350.
 
 ## Getting OpenOCD for RP2350
 
-To use the Raspberry Pi Debug Probe for RP2350 based boards with an SWD debug
-port, you need the `targets/rp2350.cfg` openocd configuration file. Currently
-(Feb 9, 2025), openocd from Debian 12 and the Zephyr SDK 0.17.0 don't include
-the config file. You can get a copy by cloning the Raspberry Pi openocd fork
-into your Zephyr workspace like this:
+Until RP2350 support makes it into the upstream OpenOCD and downstream distro
+packages, flashing an RP2350 board with the Raspberry Pi Debug Probe requires
+using the Raspberry Pi fork of OpenOCD.
+
+You can git clone and build the Raspberry Pi openocd like this (check openocd
+README file for more details):
 
 ```
+$ sudo apt install make libtool pkg-config \
+    autoconf automake texinfo libusb-1.0-0-dev libhidapi-dev
 $ cd ~/code/zephyr-workspace
 $ git clone https://github.com/raspberrypi/openocd.git
-$ ls openocd/tcl/target/rp2350*
-openocd/tcl/target/rp2350.cfg
-openocd/tcl/target/rp2350-dbgkey-nonsecure.cfg
-openocd/tcl/target/rp2350-dbgkey-secure.cfg
-openocd/tcl/target/rp2350-rescue.cfg
-openocd/tcl/target/rp2350-riscv.cfg
-$
+$ cd openocd
+$ ./bootstrap
+$ ./configure --prefix=$(pwd)/build
+$ make
+$ make install
+```
+
+Those commands will put your new openocd binary in:
+```
+~/code/zephyr-workspace/openocd/build/bin/openocd
+```
+
+To make sure that `west flash` uses the correct openocd binary, you will need
+to set the `OPENOCD` cmake variable when you do `west build`. For example, you
+could put a `set(OPENOCD ...)` in CMakeLists.txt or do something like:
+```
+(.venv) $ cd ~/code/zephyr-workspace/zphqst-01
+(.venv) $ west build ... -- -DOPENOCD=../openocd/build/bin/openocd
 ```
 
 

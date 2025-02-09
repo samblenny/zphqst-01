@@ -1,6 +1,14 @@
-# CAUTION: For this to work, you will need the target/rp2350.cfg for OpenOCD
-# which is only available in very recent versions. You can get the file at
-# https://github.com/raspberrypi/openocd/blob/sdk-2.0.0/tcl/target/rp2350.cfg
-
-# Just use the normal Raspberry Pi Pico 2 config
-include(${ZEPHYR_BASE}/boards/raspberrypi/rpi_pico2/board.cmake)
+# CAUTION: For this to work, you will need the Raspberry Pi fork of openocd,
+# including the openocd binary and the target/rp2350.cfg config file. At the
+# time I'm writing this (Feb 9, 2025), upstream openocd does not yet support
+# the RP2350. To get openocd, you can do:
+#
+#     $ cd ~/code/zephyr-workspace
+#     $ git clone https://github.com/raspberrypi/openocd.git
+#
+board_runner_args(openocd --cmd-pre-init "adapter driver cmsis-dap")
+board_runner_args(openocd --cmd-pre-init "adapter speed 5000")
+board_runner_args(openocd --cmd-pre-init "source [find target/rp2350.cfg]")
+board_runner_args(uf2 "--board-id=RP2350")
+include(${ZEPHYR_BASE}/boards/common/openocd.board.cmake)
+include(${ZEPHYR_BASE}/boards/common/uf2.board.cmake)
