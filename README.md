@@ -12,6 +12,27 @@ playground guide, which explains how to make a custom Zephyr board definition
 for the Adafruit Feather RP2350.
 
 
+## Getting OpenOCD for RP2350
+
+To use the Raspberry Pi Debug Probe for RP2350 based boards with an SWD debug
+port, you need the `targets/rp2350.cfg` openocd configuration file. Currently
+(Feb 9, 2025), openocd from Debian 12 and the Zephyr SDK 0.17.0 don't include
+the config file. You can get a copy by cloning the Raspberry Pi openocd fork
+into your Zephyr workspace like this:
+
+```
+$ cd ~/code/zephyr-workspace
+$ git clone https://github.com/raspberrypi/openocd.git
+$ ls openocd/tcl/target/rp2350*
+openocd/tcl/target/rp2350.cfg
+openocd/tcl/target/rp2350-dbgkey-nonsecure.cfg
+openocd/tcl/target/rp2350-dbgkey-secure.cfg
+openocd/tcl/target/rp2350-rescue.cfg
+openocd/tcl/target/rp2350-riscv.cfg
+$
+```
+
+
 ## License & Copying
 
 Files in this repo are dual licensed as **"Apache-2.0 OR MIT"** unless marked
