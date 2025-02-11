@@ -1,63 +1,77 @@
 /* SPDX-License-Identifier: Apache-2.0 OR MIT */
 /* SPDX-FileCopyrightText: Copyright 2025 Sam Blenny */
 
-/dts-v1/;
-
-/* These includes refer to files from zephyr/dts/arm/raspberrypi/rpi_pico/
- * and those files pull in a whole tree of their own includes. Most of the
- # interesting stuff is in zephyr/dts/arm/raspberrypi/rpi_pico/rp2350.dtsi
+/* For addresses, registers, flash partition table info, etc refer to the
+ * Raspberry Pi RP2350 datasheet:
+ * https://datasheets.raspberrypi.com/rp2350/rp2350-datasheet.pdf
+ *
+ * Datasheet notes:
+ * - Section 4.1: boot rom is 32kB starting at 0x00000000
+ * - Section 5.1: Bootroom Concepts
+ * - Section 5.1.2: Partition Tables
+ * - Section 5.1.4: Image Definitions (purpose of .image_def partition)
+ * See also:
+ * https://docs.zephyrproject.org/latest/build/dts/api/bindings/mtd/fixed-partitions.html
  */
-#include <raspberrypi/rpi_pico/rp2350a.dtsi>
-#include <raspberrypi/rpi_pico/m33.dtsi>
-#include <zephyr/dt-bindings/pinctrl/rpi-pico-rp2350a-pinctrl.h>
 
+
+/* 1. Start with the Pi Pico 2 devicetree config.
+ */
+#include "../../../zephyr/boards/raspberrypi/rpi_pico2/rpi_pico2_rp2350a_m33.dts"
+
+
+/* 2. Remove unsuitable nodes and properties for Pico 2 board pinout.
+ */
 / {
-	chosen {
-		zephyr,code-partition = &code_partition;
-		zephyr,console = &uart0;
-		zephyr,flash = &flash0;
-		zephyr,shell-uart = &uart0;
-		zephyr,sram = &sram0;
+	aliases {
+		/delete-property/ led0;
+		/delete-property/ pwm-led0;
+	};
+	/delete-node/ connector;
+	/delete-node/ led_0;
+	/delete-node/ pwm_led_0;
+};
+&i2c0 {
+	status = "disabled";
+};
+
+
+/* 3. Add config for Feather RP2350 board pinout.
+ *    See:
+ *    - zephyr/include/zephyr/dt-bindings/pinctrl/rpi-pico-pinctrl-common.h
+ *    - zephyr/include/zephyr/dt-bindings/pinctrl/rpi-pico-rp2350-pinctrl-common.h
+ *    - zephyr/include/zephyr/dt-bindings/pinctrl/rpi-pico-rp2350a-pinctrl.h
+ *    for definitions of UART0_TX_P0, UART0_RX_P1, etc.
+ */
+&pinctrl {
+	uart0_feather: uart0_feather {
+		group1 {
+			pinmux = <UART0_TX_P0>;
+		};
+		group2 {
+			pinmux = <UART0_RX_P1>;
+			input-enable;
+		};
+	};
+	i2c1_feather: i2c1_feather {
+		group1 {
+			pinmux = <I2C1_SDA_P2>, <I2C1_SCL_P3>;
+			input-enable;
+			input-schmitt-enable;
+		};
 	};
 };
 
 &uart0 {
 	current-speed = <115200>;
+	pinctrl-0 = <&uart0_feather>;
+	pinctrl-names = "default";
 	status = "okay";
 };
 
-/* For addresses, registers, flash partition table info, etc refer to the
- * Raspberry Pi RP2350 datasheet:
- * https://datasheets.raspberrypi.com/rp2350/rp2350-datasheet.pdf
- */
-
-&flash0 {
-	reg = <0x10000000 DT_SIZE_M(4)>;
+&i2c1 {
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+	pinctrl-0 = <&i2c1_feather>;
+	pinctrl-names = "default";
 	status = "okay";
-	/* Datasheet notes:
-	 * - Section 4.1: boot rom is 32kB starting at 0x00000000
-	 * - Section 5.1: Bootroom Concepts
-	 * - Section 5.1.2: Partition Tables
-	 * - Section 5.1.4: Image Definitions (purpose of .image_def partition)
-	 * See also:
-	 * https://docs.zephyrproject.org/latest/build/dts/api/bindings/mtd/fixed-partitions.html
-	 * - Properties > "Top level properties" > "Base properties" explains the
-	 *   #address-cells and #size-cells properties (the '#' is not a comment,
-	 *   and it's also not a C preprocessor directive)
-	 */
-	partitions {
-		compatible = "fixed-partitions";
-		#address-cells = <1>;
-		#size-cells = <1>;
-		image_def: partition@0 {
-			label = "image_def";
-			reg = <0x00000000 0x100>;
-			read-only;
-		};
-		code_partition: partition@100 {
-			label = "code-partition";
-			reg = <0x100 (DT_SIZE_M(4) - 0x100)>;
-			read-only;
-		};
-	};
 };

@@ -13,13 +13,15 @@
 _OPENOCD=-DOPENOCD=../openocd/build/bin/openocd
 
 # Build Zephyr shell for Feather RP2350 with OpenOCD and Pi Debug Probe.
-# This depends on CMakeLists.txt setting OPENOCD and BOARD_ROOT correctly. 
 shell:
-	west build -b feather_rp2350/rp2350a/m33 -- ${_OPENOCD} ${_CMAKE_ECHO}
+	west build -b feather_rp2350/rp2350a/m33         \
+		../zephyr/samples/subsys/shell/shell_module/ \
+		-- -DBOARD_ROOT=$$(pwd) ${_OPENOCD} ${_CMAKE_ECHO}
 
 # Build the zephyr repo's hello_world sample
 hello_world:
-	west build -b feather_rp2350/rp2350a/m33 ../zephyr/samples/hello_world \
+	west build -b feather_rp2350/rp2350a/m33 \
+		../zephyr/samples/hello_world        \
 		-- -DBOARD_ROOT=$$(pwd) ${_OPENOCD} ${_CMAKE_ECHO}
 
 # Interactively modify config from previous build
@@ -53,4 +55,14 @@ dtc:
 		-Wunique_unit_address_if_enabled         \
 		build/zephyr/zephyr.dts
 
-.PHONY: shell hello_world menuconfig flash uart clean dtc
+# This may help diagnose errors during gen_edt.py script (after dtc)
+gen_edt:
+	python3 ../zephyr/scripts/dts/gen_edt.py         \
+		--dts build/zephyr/zephyr.dts.pre            \
+		--dtc-flags ''                               \
+		--bindings-dirs ../zephyr/dts/bindings       \
+		--dts-out build/zephyr/zephyr.dts.new        \
+		--edt-pickle-out build/zephyr/edt.pickle.new \
+		--vendor-prefixes ../zephyr/dts/bindings/vendor-prefixes.txt
+
+.PHONY: shell hello_world menuconfig flash uart clean dtc gen_edt
