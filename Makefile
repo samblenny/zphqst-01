@@ -18,12 +18,6 @@ shell:
 		../zephyr/samples/subsys/shell/shell_module/ \
 		-- -DBOARD_ROOT=$$(pwd) ${_OPENOCD} ${_CMAKE_ECHO}
 
-# Build the zephyr repo's hello_world sample
-hello_world:
-	west build -b feather_rp2350/rp2350a/m33 \
-		../zephyr/samples/hello_world        \
-		-- -DBOARD_ROOT=$$(pwd) ${_OPENOCD} ${_CMAKE_ECHO}
-
 # Interactively modify config from previous build
 menuconfig:
 	west build -t menuconfig

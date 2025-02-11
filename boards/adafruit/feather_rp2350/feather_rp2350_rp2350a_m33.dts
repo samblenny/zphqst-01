@@ -74,4 +74,12 @@
 	pinctrl-0 = <&i2c1_feather>;
 	pinctrl-names = "default";
 	status = "okay";
+
+	sht4x@44 {
+		compatible = "sensirion,sht4x";
+		friendly-name = "Adafruit SHT41 Humidity & Temp";
+		reg = <0x44>;
+		repeatability = <1>;
+		status = "okay";
+	};
 };
