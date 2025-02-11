@@ -12,6 +12,8 @@ example for my
 playground guide, which explains how to make a custom Zephyr board definition
 for the Adafruit Feather RP2350.
 
+![Feather RP2350, Pi Debug Probe, and SHT41 sensor](Feather_RP2350_Pi_Debug_Probe.jpeg)
+
 
 ## Getting OpenOCD for RP2350
 
