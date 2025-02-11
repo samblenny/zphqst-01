@@ -27,6 +27,8 @@ flash:
 	west flash
 
 # Connect to board's serial console using Pi Debug Probe UART interface
+# This works for me on Debian 12 with one and only 1 Pi Debug Probe plugged
+# in. You may need to use a different device path for other system setups.
 uart:
 	@screen -fn /dev/serial/by-id/*Pi_Debug* 115200
 
@@ -59,4 +61,4 @@ gen_edt:
 		--edt-pickle-out build/zephyr/edt.pickle.new \
 		--vendor-prefixes ../zephyr/dts/bindings/vendor-prefixes.txt
 
-.PHONY: shell hello_world menuconfig flash uart clean dtc gen_edt
+.PHONY: shell menuconfig flash uart clean dtc gen_edt
