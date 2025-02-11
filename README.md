@@ -3,10 +3,11 @@
 
 # zphqst-01
 
-**WORK IN PROGRESS**
-**This doesn't actually do much of anything useful yet**
-
-This repo has example code for the
+This repo has an out of tree Zephyr board definition for the Adafruit Feather
+RP2350 connected to an SHT41 I2C temperature and humidity sensor. The Makefile
+and board \_defconfig file are set up to build a Zephyr shell with I2C
+scanning and SHT41 measurement support. The point of all this is to provide an
+example for my
 [Zephyr Quest: Feather RP2350 Board Def](https://adafruit-playground.com/u/SamBlenny/pages/zephyr-quest-feather-rp2350-board-def)
 playground guide, which explains how to make a custom Zephyr board definition
 for the Adafruit Feather RP2350.
