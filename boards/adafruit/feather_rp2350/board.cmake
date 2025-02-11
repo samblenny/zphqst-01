@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0 OR MIT
+# SPDX-FileCopyrightText: Copyright 2025 Sam Blenny
+
 # CAUTION: For this to work, you will need the Raspberry Pi fork of openocd,
 # including the openocd binary and the target/rp2350.cfg config file. At the
 # time I'm writing this (Feb 9, 2025), upstream openocd does not yet support
